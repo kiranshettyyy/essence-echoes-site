@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Heart, ShoppingBag, Share2, Star, Truck, Shield, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingBag, Share2, Star, Truck, Shield, RotateCcw, Facebook, Twitter, MessageCircle, Mail, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { products } from '@/data/products';
 import { toast } from '@/hooks/use-toast';
 
@@ -69,6 +70,42 @@ const ProductPage = () => {
         title: "Link copied!",
         description: "Product link has been copied to clipboard."
       });
+    }
+  };
+
+  const handleSocialShare = (platform: string) => {
+    const url = window.location.href;
+    const text = `Check out this amazing fragrance: ${product.name} - ${product.description}`;
+    const hashtags = 'LuxeScent,Perfume,Fragrance';
+    
+    let shareUrl = '';
+    
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}&hashtags=${hashtags}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`;
+        break;
+      case 'email':
+        shareUrl = `mailto:?subject=${encodeURIComponent(`Check out ${product.name}`)}&body=${encodeURIComponent(`${text}\n\n${url}`)}`;
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(url);
+        toast({
+          title: "Link copied!",
+          description: "Product link has been copied to clipboard."
+        });
+        return;
+      default:
+        return;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -228,13 +265,54 @@ const ProductPage = () => {
               >
                 <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={handleShare}
-              >
-                <Share2 className="h-5 w-5" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="hover:bg-luxury-purple/10 hover:border-luxury-purple"
+                  >
+                    <Share2 className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem 
+                    onClick={() => handleSocialShare('facebook')}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-luxury-purple/10"
+                  >
+                    <Facebook className="h-4 w-4 text-blue-600" />
+                    Share on Facebook
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleSocialShare('twitter')}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-luxury-purple/10"
+                  >
+                    <Twitter className="h-4 w-4 text-blue-400" />
+                    Share on Twitter
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleSocialShare('whatsapp')}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-luxury-purple/10"
+                  >
+                    <MessageCircle className="h-4 w-4 text-green-500" />
+                    Share on WhatsApp
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleSocialShare('email')}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-luxury-purple/10"
+                  >
+                    <Mail className="h-4 w-4 text-gray-600" />
+                    Share via Email
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleSocialShare('copy')}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-luxury-purple/10"
+                  >
+                    <Copy className="h-4 w-4 text-gray-600" />
+                    Copy Link
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Benefits */}
