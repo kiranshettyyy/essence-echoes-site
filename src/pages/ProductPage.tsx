@@ -9,9 +9,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { products } from '@/data/products';
 import { toast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
 
 const ProductPage = () => {
   const { id } = useParams();
+  const { addToCart } = useCart();
   const product = products.find(p => p.id === id);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -51,9 +53,19 @@ const ProductPage = () => {
       });
       return;
     }
+    
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      size: selectedSize,
+      quantity: quantity,
+      image: product.images[0]
+    });
+    
     toast({
       title: "Added to cart!",
-      description: `${product.name} (${selectedSize}) has been added to your cart.`
+      description: `${product.name} (${selectedSize}) x${quantity} has been added to your cart.`
     });
   };
 

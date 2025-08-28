@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Search, Menu, X, Heart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/CartContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { getTotalItems } = useCart();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
@@ -49,9 +51,11 @@ const Navbar = () => {
             </Button>
             <Button variant="ghost" size="icon" className="hover:bg-secondary relative">
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-luxury-purple text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                0
-              </span>
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-luxury-purple text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
+              )}
             </Button>
           </div>
 
@@ -110,9 +114,11 @@ const Navbar = () => {
                 </Button>
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingBag className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 bg-luxury-purple text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    0
-                  </span>
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-luxury-purple text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
                 </Button>
               </div>
             </div>
